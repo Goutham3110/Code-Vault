@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeVault - Share & Discover Code Snippets</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">CodeVault</span>
+            </div>
+            <div class="nav-links">
+                <button class="nav-link" data-tab="browse">Discover</button>
+                <button class="nav-link" data-tab="add">Create</button>
+                <button class="nav-link" data-tab="saved">
+                    <span>Saved</span>
+                    <span id="savedCount" class="badge">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <!-- Hero Section (Browse Tab) -->
+        <section id="browse" class="tab-content active" role="main">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h1>Discover Beautiful Code</h1>
+                    <p>Explore, save, and share high-quality code snippets</p>
+                </div>
+
+                <div class="search-bar-container">
+                    <div class="search-bar">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search snippets by title or language...">
+                    </div>
+                    <select id="languageFilter" class="filter-select">
+                        <option value="">All Languages</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="python">Python</option>
+                        <option value="react">React</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="snippetsContainer" class="snippets-grid">
+                <div class="loading-state">
+                    <p>Loading snippets...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Create Snippet Section -->
+        <section id="add" class="tab-content" role="main">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Create New Snippet</h2>
+                    <p>Share your code with the community</p>
+                </div>
+
+                <form id="addSnippetForm" class="snippet-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="snippetTitle" class="form-label">Snippet Title</label>
+                            <input type="text" id="snippetTitle" class="form-input" placeholder="e.g., Array Flatten Function" required>
+                            <p class="form-hint">Give your snippet a descriptive name</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="snippetLanguage" class="form-label">Language</label>
+                            <select id="snippetLanguage" class="form-select" required>
+                                <option value="">Select a language</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="html">HTML</option>
+                                <option value="css">CSS</option>
+                                <option value="python">Python</option>
+                                <option value="react">React</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="snippetDesc" class="form-label">Description</label>
+                        <textarea id="snippetDesc" class="form-textarea" placeholder="Explain what this code does and when to use it..." rows="3" required></textarea>
+                        <p class="form-hint">Help others understand the purpose and use case</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="snippetCode" class="form-label">Code</label>
+                        <textarea id="snippetCode" class="form-textarea form-code" placeholder="Paste your code here..." rows="8" required></textarea>
+                        <p class="form-hint">Include comments for clarity</p>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <span>✨ Publish Snippet</span>
+                        </button>
+                        <button type="reset" class="btn btn-ghost btn-lg">Clear Form</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Saved Snippets Section -->
+        <section id="saved" class="tab-content" role="main">
+            <div class="section-header">
+                <h2>Your Saved Collection</h2>
+                <p id="savedInfo" class="section-subtitle">Build your personal codebase</p>
+            </div>
+            <div id="savedContainer" class="snippets-grid">
+                <p class="empty-message">
+                    <span class="empty-icon">📚</span>
+                    No saved snippets yet. Start exploring and save your favorites!
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Code Viewer Modal -->
+    <div id="codeModal" class="modal" role="dialog" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title-section">
+                    <h2 id="popupTitle" class="modal-title"></h2>
+                    <span id="popupLanguage" class="language-badge"></span>
+                </div>
+                <button class="btn-close" aria-label="Close modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-description">
+                    <p id="popupDesc"></p>
+                </div>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-language" id="codeLang"></span>
+                        <button class="btn-copy" title="Copy code" data-tooltip="Copied!">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                            </svg>
+                        </button>
+                    </div>
+                    <pre><code id="popupCode" class="code-content"></code></pre>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="saveBtn" class="btn btn-primary">💾 Save This Snippet</button>
+                <button id="shareBtn" class="btn btn-secondary">📤 Share</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="alert"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
